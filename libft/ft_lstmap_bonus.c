@@ -12,10 +12,9 @@ t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 	while (lst)
 	{
 		(current = ft_lstnew((*f)(lst->content)));
-			if (!current)
-		{
-			while (new_list)
-		{
+		if (!current){
+			while (new_list){
+				
 			current = new_list->next;
 			(*del)(new_list->content);
 			free(new_list);
