@@ -26,6 +26,13 @@ bonus: $(OBJ) $(OBJBONUS) $(INCLUDE)
 
 .PHONY: clean fclean re 
 
+norme:
+	norminette ./libft/
+	@echo
+	norminette ./$(HEADER)/
+	@echo
+	norminette ./$(DIR_S)/
+
 clean:	
 	$(RM) $(OBJ) $(OBJBONUS)
 
