@@ -6,58 +6,96 @@
 /*   By: rde-migu <rde-migu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/19 13:45:46 by rde-migu          #+#    #+#             */
-/*   Updated: 2024/01/31 13:24:16 by rde-migu         ###   ########.fr       */
+/*   Updated: 2024/02/08 20:19:10 by rde-migu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	count_str(const char *s, char c)
+static int	wordlen(const char *s, char c)
 {
-	size_t	count;
+	int	len;
+
+	len = 0;
+	while (*s && *s != c)
+	{
+		len++;
+		s++;
+	}
+	return (len);
+}
+
+static int	countwords(const char *s, char c)
+{
+	int	count;
 
 	count = 0;
 	while (*s)
-		if (*s++ != c && (*s == c || *s == '\0'))
+	{
+		if (*s != c)
+		{
 			count++;
+			s += wordlen(s, c);
+		}
+		else
+			s++;
+	}
 	return (count);
 }
 
-void	create_substr(char **split, const char *s, char c)
+static void	*free_strs(char**strs)
 {
-	size_t	i;
-	size_t	k;
-	size_t	j;
+	int	i;
 
 	i = 0;
-	k = 0;
-	while (s[i])
-	{
-		if (s[i] != c)
-		{
-			j = i;
-			while (s[j] != c && s[j] != '\0')
-				j++;
-			split[k++] = ft_substr(s, i, j - i);
-			i = j;
-		}
-		else
-			i++;
-	}
-	split[k] = NULL;
+	while (strs[i])
+		free(strs[i++]);
+	free(strs);
+	return (NULL);
 }
 
 char	**ft_split(char const *s, char c)
 {
-	char	**split;
-	size_t	count;
+	char	**strs;
+	int		i;
+	int		count ;
 
-	if (s == NULL)
+	if (!s)
 		return (NULL);
-	count = count_str(s, c);
-	split = (char **)malloc(sizeof(char *) * (count + 1));
-	if (split == NULL)
+	count = countwords(s, c);
+	strs = malloc(sizeof(char *) * (count + 1));
+	if (!strs)
 		return (NULL);
-	create_substr(split, s, c);
-	return (split);
+	strs[count] = NULL;
+	i = 0;
+	while (*s)
+	{
+		if (*s != c)
+		{
+			strs[i] = ft_substr(s, 0, wordlen(s, c));
+			if (!strs[i++])
+				return (free_strs(strs));
+			s += wordlen(s, c);
+		}
+		else
+			s++;
+	}
+	return (strs);
 }
+/*int main() 
+{
+    const char *str = "Hola, soy, radfer";
+    char c = ' ';
+    char **result = ft_split(str, c);
+
+    int i =  0;
+    while (result[i] != NULL) 
+    {
+        printf("%s\n", result[i]);
+        free(result[i]);
+        i++;
+    }
+    free(result);
+
+    return  0;
+}*/

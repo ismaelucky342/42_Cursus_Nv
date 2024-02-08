@@ -3,40 +3,95 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rde-migu <rde-migu@student.42madrid>       +#+  +:+       +#+        */
+/*   By: rde-migu <rde-migu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 14:07:38 by rde-migu          #+#    #+#             */
-/*   Updated: 2024/01/31 12:34:37 by rde-migu         ###   ########.fr       */
+/*   Updated: 2024/02/08 20:41:38 by rde-migu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+typedef struct s_list
 {
-	t_list	*new_list;
-	t_list	*current;
+    void *content;
+    struct s_list *next;
+} t_list;
 
-	if (!f || !del)
-		return (NULL);
-	new_list = NULL;
-	while (lst)
-	{
-		(current = ft_lstnew((*f)(lst->content)));
-		if (!current)
-		{
-			while (new_list)
-			{
-				current = new_list->next;
-				(*del)(new_list->content);
-				free(new_list);
-				new_list = current;
-			}
-			lst = NULL;
-			return (NULL);
-		}
-		ft_lstadd_back(&new_list, current);
-		lst = lst->next;
-	}
-	return (new_list);
+t_list *create_new_node(void *content)
+{
+    t_list *new_node = malloc(sizeof(t_list));
+    if (!new_node)
+        return NULL;
+    new_node->content = content;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void print_list(t_list *lst)
+{
+    while (lst)
+    {
+        printf("%p ", lst->content);
+        lst = lst->next;
+    }
+    printf("\n");
+}
+
+void *map_function(void *content)
+{
+    int *value = (int *)content;
+    int *new_value = malloc(sizeof(int));
+    if (!new_value)
+        return NULL;
+    *new_value = *value * 2;
+    return new_value;
+}
+
+void free_int(void *content)
+{
+    free(content);
+}
+
+int main(void)
+{
+    t_list *lst = NULL;
+
+    int content1 = 10;
+    int content2 = 20;
+    int content3 = 30;
+
+    t_list *node1 = create_new_node(&content1);
+    t_list *node2 = create_new_node(&content2);
+    t_list *node3 = create_new_node(&content3);
+
+    node1->next = node2;
+    node2->next = node3;
+    lst = node1;
+
+    printf("Lista original: ");
+    print_list(lst);
+
+    t_list *mapped_list = ft_lstmap(lst, &map_function, &free_int);
+
+    printf("Lista resultante después del mapeo: ");
+    print_list(mapped_list);
+
+    while (lst)
+    {
+        t_list *temp = lst;
+        lst = lst->next;
+        free(temp->content);
+        free(temp);
+    }
+
+    while (mapped_list)
+    {
+        t_list *temp = mapped_list;
+        mapped_list = mapped_list->next;
+        free(temp->content);
+        free(temp);
+    }
+
+    return 0;
 }
