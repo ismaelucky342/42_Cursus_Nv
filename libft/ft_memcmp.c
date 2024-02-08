@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_memcmp.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rde-migu <rde-migu@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/10 13:35:09 by rde-migu          #+#    #+#             */
+/*   Updated: 2024/01/25 18:57:52 by rde-migu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "libft.h"
 
@@ -13,16 +24,11 @@ int	ft_memcmp(const void *dst, const void *str, size_t n)
 	i = 0;
 	diff = 0;
 	if (n)
-		while (i < n)
-		{
-			diff = dst2[i] - str2[i];
-			if (diff != 0)
-				return diff;
-			i++;
-		}
+		while (n--)
+			if (*dst2++ != *str2++)
+				return (*(--dst2) - *(--str2));
 	return (0);
 }
-
 
 /*int main()
 {
